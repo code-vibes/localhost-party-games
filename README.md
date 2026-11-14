@@ -1,60 +1,83 @@
 # Local Host Party Games
 
-A native **SwiftUI** iOS party-games app inspired by colorful “1234 Player Games” tile menus — with **same-phone pass-and-play** and **Local Host** multiplayer over Wi‑Fi / personal hotspot (MultipeerConnectivity + QR join).
+Cross-platform **Flutter** party games for Project **1234 Localhost** — **web**, **Android**, and **iOS**.
 
-## Open in Xcode
+Colorful 2×3 tile menu, six 2-player-style minigames, pass-and-play, and **same-network-only** Local Host + QR. No accounts. No internet required for play.
 
-1. Clone this repo on a Mac.
-2. Open `LocalHostPartyGames/LocalHostPartyGames.xcodeproj` in Xcode 15+.
-3. Select an iPhone Simulator or a physical device (Local Host / QR camera needs a device for real multiplayer).
-4. Set your **Signing Team** in the target’s Signing & Capabilities tab.
-5. Build & run (`⌘R`).
+> **Supersedes** the SwiftUI iOS prototype ([PR #1](https://github.com/code-vibes/localhost-party-games/pull/1)). Native sources live under [`archive/swiftui-ios/`](archive/swiftui-ios/).
 
-**Requirements:** iOS 17+, Xcode 15+.
+## Games
 
-## What’s included (v1)
-
-### Flow
-Home → player count (1–4) → colorful game grid → playable minigames.
-
-### Games (2P grid, playable stubs / simple gameplay)
-1. **Cup Pong** — drag-and-release throws into a cup triangle  
-2. **Wheelie** — hold balance in the green zone  
-3. **Animal Stack** — drop animals; don’t topple  
-4. **Basketball Hoops** — timed swipe shots  
-5. **Brainrot Stack** — chaotic drop stack  
-6. **Archery** — charge / release for bullseye points  
-
-Session win counters sit on the red/blue (and extra) avatars under the 2P-style grid.
-
-### Local Host multiplayer
-- **Host Local Session** — advertises a Bonjour / Multipeer service (`lhost-party`), shows a **4-letter code** + **QR** (`localhostparty://join?...`).
-- **Join via QR / LAN** — scan QR or type the code; browser invites the matching host on the same Wi‑Fi / hotspot.
-- Lobby lists players, lets the host pick any of the six games, then launches play.
-- **Sync MVP:** lobby + start signals for all games; deeper per-frame input sync is prioritized for Cup Pong & Animal Stack next.
-
-Permissions used: Local Network, Bonjour (`_lhost-party._tcp`), Camera (QR).
-
-## Architecture
-
-| Area | Role |
+| Tile | Game |
 |------|------|
-| `Core/GameRegistry.swift` | Add new games by appending a `GameDefinition` + view in `GameContainerView` |
-| `UI/` | Home, player count, tile grid matching the flat colorful reference art |
-| `Games/` | One folder per minigame |
-| `Networking/` | `LocalHostController` (Multipeer), QR generate/scan, lobby UI |
+| 🏓 | Cup Pong |
+| 🛞 | Wheelie |
+| 🐱 | Animal Stack |
+| 🏀 | Basketball Hoops |
+| 🧠 | Brainrot Stack |
+| 🏹 | Archery |
 
-## What runs without a Mac
+## Quick start
 
-On this Linux cloud agent you can:
-- Read / edit Swift sources  
-- Create the GitHub repo and push  
+```bash
+flutter pub get
+flutter run -d chrome          # web
+flutter run                    # connected device / emulator
+```
 
-You **cannot** compile, Simulator-run, or device-test the iOS app without Xcode on macOS.
+### Release builds
 
-## Try next on a Mac
+```bash
+flutter build web --release
+flutter build apk --release    # → build/app/outputs/flutter-apk/app-release.apk
+flutter build ios --no-codesign
+# Signed iOS (Mac or CI with secrets):
+flutter build ipa
+```
 
-1. Run in Simulator — walk Home → 2 Players → each of the six games.  
-2. On two physical iPhones on the same hotspot: Host on one, Join/QR on the other, confirm lobby roster.  
-3. Add your Apple Developer team, then install on device for camera QR.  
-4. Extend `LocalHostMessage.gameEvent` for live Cup Pong / Animal Stack sync.
+### Local Host (LAN)
+
+1. **Host** on Android/iOS (or CLI): start a Local Session → show QR / code.  
+2. **Join** from another device on the same Wi‑Fi/hotspot via QR or code + host IP.  
+3. Web browsers **cannot bind** the host socket — use a phone as host, or:
+
+```bash
+dart run tool/lan_host.dart
+```
+
+Protocol: HTTP + WebSocket on port **7423**. Deep link: `localhostparty://join?code=…&ip=…&port=7423`.
+
+## iOS without your Mac
+
+| Path | What you get |
+|------|----------------|
+| **GitHub Actions** `ios` job | Unsigned IPA artifact (`ios-unsigned-ipa`) |
+| **Codemagic** (`codemagic.yaml`) | Signed build → TestFlight when Apple creds are set |
+| **Actions + Apple secrets** | `flutter build ipa` in CI with signing |
+
+You still need Apple Developer + a physical iPhone (or someone else's Mac) for a signed install. You do **not** need *your* Mac day-to-day once CI is wired.
+
+## CI
+
+Workflow template: [`docs/github-actions-build.yml`](docs/github-actions-build.yml)  
+(copy to `.github/workflows/build.yml` once a token with the `workflow` scope can write Actions files). Builds:
+
+- `web-build` — static site
+- `android-apk` — release APK
+- `ios-unsigned-ipa` — macOS runner, no codesign
+
+Signed iOS / TestFlight: [`codemagic.yaml`](codemagic.yaml).
+
+## Layout
+
+```
+lib/           Flutter app (UI, games, networking)
+tool/          CLI LAN host for web demos
+archive/       Archived SwiftUI iOS prototype
+ios/ android/ web/   Flutter platform folders
+codemagic.yaml Signed iOS / TestFlight path
+```
+
+## Design notes
+
+Warm coral/cream palette, playful display type, full-bleed game canvases — inspired by casual 2 PLAYER GAMES tile menus. Local Host branding is first-class on home and lobby screens.
