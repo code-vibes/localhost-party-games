@@ -1,0 +1,413 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		03AD3600946144A499FC1F07 /* LocalHostPartyGamesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AEDC3E15A541998925F724 /* LocalHostPartyGamesApp.swift */; };
+		A1D91B941D9644A5BBB70BC4 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 990A9774C4B541D09E994F25 /* AppModel.swift */; };
+		CA754199157C4DC3ABE4D792 /* GameRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30BE4A28926544668EC85860 /* GameRegistry.swift */; };
+		AEF7A00F8675463CADA20DB4 /* AnimalStackGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 363060B84A024A1FA8F515E9 /* AnimalStackGameView.swift */; };
+		97DFFACABCA347788597E5C1 /* ArcheryGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82646139F7974FFE809CC3FF /* ArcheryGameView.swift */; };
+		6B49A4E171AE4DDEAB4F5755 /* BasketballHoopsGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804311698C5142329D71F25B /* BasketballHoopsGameView.swift */; };
+		A61408A7124442D585B25F52 /* BrainrotStackGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44DB98C89878475BBE5D5AA5 /* BrainrotStackGameView.swift */; };
+		A06216F6A3924FC5AA2C2383 /* CupPongGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 141D716A1B484DB9999F1D0E /* CupPongGameView.swift */; };
+		394A33720ED94F6D893A1E7F /* GameContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD30D90E620C4394ADE20532 /* GameContainerView.swift */; };
+		C581B97159174BD1823DD38D /* WheelieGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6013B658F07E49BFB669DA99 /* WheelieGameView.swift */; };
+		4FFE43CC9CD743759562A9E4 /* LocalHostLobbyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FF10707562A47D293BD7CE7 /* LocalHostLobbyView.swift */; };
+		26C4F1DB3A184E70A875B5A0 /* LocalHostSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EB317DAF19C4206863A0F4C /* LocalHostSession.swift */; };
+		5302597290F746A8A665FAC4 /* QRCodeTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = A612FEDE76EC41EEB6D97269 /* QRCodeTools.swift */; };
+		C859ADC7810A4FE7826FD073 /* GameArtView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF9B2C46999549CAABB08142 /* GameArtView.swift */; };
+		94CA8BA0B2E448EA82827CF2 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CDD903E5BEF4FD7A72045F8 /* HomeView.swift */; };
+		B02D966F05354492AA235E93 /* PlayerCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 834367B7CCC148F49B30444D /* PlayerCountView.swift */; };
+		521FEB67BE024338B933203D /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48EF756D67444BF4820A356A /* RootView.swift */; };
+		E2587E41F3D4435E8099E6C0 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18A2E0E934544CE483C7A5FA /* Theme.swift */; };
+		6409442F00854D5D80B399EC /* TwoPlayerGamesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67CE38BEDA14C69A51F8051 /* TwoPlayerGamesView.swift */; };
+		3356ADBC4D5847B29F22BB3B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 73AF2CF3C10246D3A7B2A96E /* Assets.xcassets */; };
+		CBF5635D2F5444EFBE8FF13F /* MultipeerConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7722D80B9846219F206851 /* MultipeerConnectivity.framework */; };
+		0418772373194402857D872B /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 716D06F574E84CB6B21D8C42 /* AVFoundation.framework */; };
+		900DF7D3141A428D9F0A38F2 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD170E1609A94C8F8CB48F7C /* CoreImage.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		3FC38908EA9446BA8CEDB5BF /* LocalHostPartyGames.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LocalHostPartyGames.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B4AEDC3E15A541998925F724 /* LocalHostPartyGamesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalHostPartyGamesApp.swift; sourceTree = "<group>"; };
+		990A9774C4B541D09E994F25 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		30BE4A28926544668EC85860 /* GameRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameRegistry.swift; sourceTree = "<group>"; };
+		363060B84A024A1FA8F515E9 /* AnimalStackGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimalStackGameView.swift; sourceTree = "<group>"; };
+		82646139F7974FFE809CC3FF /* ArcheryGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArcheryGameView.swift; sourceTree = "<group>"; };
+		804311698C5142329D71F25B /* BasketballHoopsGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasketballHoopsGameView.swift; sourceTree = "<group>"; };
+		44DB98C89878475BBE5D5AA5 /* BrainrotStackGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrainrotStackGameView.swift; sourceTree = "<group>"; };
+		141D716A1B484DB9999F1D0E /* CupPongGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CupPongGameView.swift; sourceTree = "<group>"; };
+		FD30D90E620C4394ADE20532 /* GameContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameContainerView.swift; sourceTree = "<group>"; };
+		6013B658F07E49BFB669DA99 /* WheelieGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WheelieGameView.swift; sourceTree = "<group>"; };
+		8FF10707562A47D293BD7CE7 /* LocalHostLobbyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalHostLobbyView.swift; sourceTree = "<group>"; };
+		0EB317DAF19C4206863A0F4C /* LocalHostSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalHostSession.swift; sourceTree = "<group>"; };
+		A612FEDE76EC41EEB6D97269 /* QRCodeTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeTools.swift; sourceTree = "<group>"; };
+		FF9B2C46999549CAABB08142 /* GameArtView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameArtView.swift; sourceTree = "<group>"; };
+		3CDD903E5BEF4FD7A72045F8 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		834367B7CCC148F49B30444D /* PlayerCountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerCountView.swift; sourceTree = "<group>"; };
+		48EF756D67444BF4820A356A /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		18A2E0E934544CE483C7A5FA /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		A67CE38BEDA14C69A51F8051 /* TwoPlayerGamesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoPlayerGamesView.swift; sourceTree = "<group>"; };
+		73AF2CF3C10246D3A7B2A96E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		87CDF53C6C284C72AC3E585A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1A7722D80B9846219F206851 /* MultipeerConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MultipeerConnectivity.framework; path = System/Library/Frameworks/MultipeerConnectivity.framework; sourceTree = SDKROOT; };
+		716D06F574E84CB6B21D8C42 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		AD170E1609A94C8F8CB48F7C /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D46BE00B64D643A4A0E0C9FD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CBF5635D2F5444EFBE8FF13F /* MultipeerConnectivity.framework in Frameworks */,
+				0418772373194402857D872B /* AVFoundation.framework in Frameworks */,
+				900DF7D3141A428D9F0A38F2 /* CoreImage.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		111408AFCC0D4FFA98E5BDA7 = {
+			isa = PBXGroup;
+			children = (
+				0842729CF26D4AA5B58B3294 /* LocalHostPartyGames */,
+				B9475FCF83EB4A30976335C9 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B9475FCF83EB4A30976335C9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3FC38908EA9446BA8CEDB5BF /* LocalHostPartyGames.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0842729CF26D4AA5B58B3294 /* LocalHostPartyGames */ = {
+			isa = PBXGroup;
+			children = (
+				7E1317256C9B44D3AB142C15 /* App */,
+				27B42EF318E5474185730656 /* Core */,
+				3133A3C39E0147BF9B2DB2A3 /* Games */,
+				C46810D1DC094B0AA0068812 /* Networking */,
+				27BA1785641B44A1979BD43E /* UI */,
+				73AF2CF3C10246D3A7B2A96E /* Assets.xcassets */,
+				87CDF53C6C284C72AC3E585A /* Info.plist */,
+			);
+			path = LocalHostPartyGames;
+			sourceTree = "<group>";
+		};
+		7E1317256C9B44D3AB142C15 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				B4AEDC3E15A541998925F724 /* LocalHostPartyGamesApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		27B42EF318E5474185730656 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				990A9774C4B541D09E994F25 /* AppModel.swift */,
+				30BE4A28926544668EC85860 /* GameRegistry.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		7E839E0EC6124D2EA4AA8F45 /* AnimalStack */ = {
+			isa = PBXGroup;
+			children = (
+				363060B84A024A1FA8F515E9 /* AnimalStackGameView.swift */,
+			);
+			path = AnimalStack;
+			sourceTree = "<group>";
+		};
+		3133A3C39E0147BF9B2DB2A3 /* Games */ = {
+			isa = PBXGroup;
+			children = (
+				7E839E0EC6124D2EA4AA8F45 /* AnimalStack */,
+				8797142D8DD04DAAA7AA4925 /* Archery */,
+				0FD9D33B743B4FF99149B6FF /* BasketballHoops */,
+				66DD8F626D454CA49B1D6072 /* BrainrotStack */,
+				17D8464CF655499D90E61CAF /* CupPong */,
+				FD30D90E620C4394ADE20532 /* GameContainerView.swift */,
+				34AA3CE902094BD8917718FE /* Wheelie */,
+			);
+			path = Games;
+			sourceTree = "<group>";
+		};
+		8797142D8DD04DAAA7AA4925 /* Archery */ = {
+			isa = PBXGroup;
+			children = (
+				82646139F7974FFE809CC3FF /* ArcheryGameView.swift */,
+			);
+			path = Archery;
+			sourceTree = "<group>";
+		};
+		0FD9D33B743B4FF99149B6FF /* BasketballHoops */ = {
+			isa = PBXGroup;
+			children = (
+				804311698C5142329D71F25B /* BasketballHoopsGameView.swift */,
+			);
+			path = BasketballHoops;
+			sourceTree = "<group>";
+		};
+		66DD8F626D454CA49B1D6072 /* BrainrotStack */ = {
+			isa = PBXGroup;
+			children = (
+				44DB98C89878475BBE5D5AA5 /* BrainrotStackGameView.swift */,
+			);
+			path = BrainrotStack;
+			sourceTree = "<group>";
+		};
+		17D8464CF655499D90E61CAF /* CupPong */ = {
+			isa = PBXGroup;
+			children = (
+				141D716A1B484DB9999F1D0E /* CupPongGameView.swift */,
+			);
+			path = CupPong;
+			sourceTree = "<group>";
+		};
+		34AA3CE902094BD8917718FE /* Wheelie */ = {
+			isa = PBXGroup;
+			children = (
+				6013B658F07E49BFB669DA99 /* WheelieGameView.swift */,
+			);
+			path = Wheelie;
+			sourceTree = "<group>";
+		};
+		C46810D1DC094B0AA0068812 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				8FF10707562A47D293BD7CE7 /* LocalHostLobbyView.swift */,
+				0EB317DAF19C4206863A0F4C /* LocalHostSession.swift */,
+				A612FEDE76EC41EEB6D97269 /* QRCodeTools.swift */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
+		27BA1785641B44A1979BD43E /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				FF9B2C46999549CAABB08142 /* GameArtView.swift */,
+				3CDD903E5BEF4FD7A72045F8 /* HomeView.swift */,
+				834367B7CCC148F49B30444D /* PlayerCountView.swift */,
+				48EF756D67444BF4820A356A /* RootView.swift */,
+				18A2E0E934544CE483C7A5FA /* Theme.swift */,
+				A67CE38BEDA14C69A51F8051 /* TwoPlayerGamesView.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F5F09AC8FF874E50A35665EF /* LocalHostPartyGames */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2E1469A30FCA43C0953FE59F /* Build configuration list for PBXNativeTarget "LocalHostPartyGames" */;
+			buildPhases = (
+				2BB7D95C14834E30839EDBF0 /* Sources */,
+				D46BE00B64D643A4A0E0C9FD /* Frameworks */,
+				C7699D115F3246AFB458AC48 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = LocalHostPartyGames;
+			productName = LocalHostPartyGames;
+			productReference = 3FC38908EA9446BA8CEDB5BF /* LocalHostPartyGames.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		BF80F336BF5C46E6AAD6539D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					F5F09AC8FF874E50A35665EF = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = 1A47C43D5CA841589D3CACDC /* Build configuration list for PBXProject "LocalHostPartyGames" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 111408AFCC0D4FFA98E5BDA7;
+			productRefGroup = B9475FCF83EB4A30976335C9 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F5F09AC8FF874E50A35665EF /* LocalHostPartyGames */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C7699D115F3246AFB458AC48 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3356ADBC4D5847B29F22BB3B /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2BB7D95C14834E30839EDBF0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				03AD3600946144A499FC1F07 /* LocalHostPartyGamesApp.swift in Sources */,
+				A1D91B941D9644A5BBB70BC4 /* AppModel.swift in Sources */,
+				CA754199157C4DC3ABE4D792 /* GameRegistry.swift in Sources */,
+				AEF7A00F8675463CADA20DB4 /* AnimalStackGameView.swift in Sources */,
+				97DFFACABCA347788597E5C1 /* ArcheryGameView.swift in Sources */,
+				6B49A4E171AE4DDEAB4F5755 /* BasketballHoopsGameView.swift in Sources */,
+				A61408A7124442D585B25F52 /* BrainrotStackGameView.swift in Sources */,
+				A06216F6A3924FC5AA2C2383 /* CupPongGameView.swift in Sources */,
+				394A33720ED94F6D893A1E7F /* GameContainerView.swift in Sources */,
+				C581B97159174BD1823DD38D /* WheelieGameView.swift in Sources */,
+				4FFE43CC9CD743759562A9E4 /* LocalHostLobbyView.swift in Sources */,
+				26C4F1DB3A184E70A875B5A0 /* LocalHostSession.swift in Sources */,
+				5302597290F746A8A665FAC4 /* QRCodeTools.swift in Sources */,
+				C859ADC7810A4FE7826FD073 /* GameArtView.swift in Sources */,
+				94CA8BA0B2E448EA82827CF2 /* HomeView.swift in Sources */,
+				B02D966F05354492AA235E93 /* PlayerCountView.swift in Sources */,
+				521FEB67BE024338B933203D /* RootView.swift in Sources */,
+				E2587E41F3D4435E8099E6C0 /* Theme.swift in Sources */,
+				6409442F00854D5D80B399EC /* TwoPlayerGamesView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		DA089A26C07D47C0BD2D4111 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = -Onone;
+				SWIFT_VERSION = 5.0;
+				ONLY_ACTIVE_ARCH = YES;
+				ENABLE_TESTABILITY = YES;
+			};
+			name = Debug;
+		};
+		DE530F9D188F4F648DF65077 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = s;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited);
+				SWIFT_OPTIMIZATION_LEVEL = -O;
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		36794E50D62C415B9D07DC77 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = LocalHostPartyGames/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.codevibes.LocalHostPartyGames;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		13F289844771455FB0E20D3E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = LocalHostPartyGames/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.codevibes.LocalHostPartyGames;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1A47C43D5CA841589D3CACDC /* Build configuration list for PBXProject "LocalHostPartyGames" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DA089A26C07D47C0BD2D4111 /* Debug */,
+				DE530F9D188F4F648DF65077 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2E1469A30FCA43C0953FE59F /* Build configuration list for PBXNativeTarget "LocalHostPartyGames" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				36794E50D62C415B9D07DC77 /* Debug */,
+				13F289844771455FB0E20D3E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = BF80F336BF5C46E6AAD6539D /* Project object */;
+}
