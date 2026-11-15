@@ -12,7 +12,7 @@ class WrestleGame extends StatefulWidget {
 }
 
 class _WrestleGameState extends State<WrestleGame> with PassAndPlayMixin {
-  final power = <int>[];
+  final power = <double>[];
 
   @override void onRoundReset() => power.clear();
 
