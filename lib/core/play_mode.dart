@@ -27,7 +27,7 @@ extension PlayModeX on PlayMode {
       };
 
   String get subtitle => switch (this) {
-        PlayMode.solo => 'Practice & chill',
+        PlayMode.solo => 'You vs CPU rivals',
         PlayMode.duo => 'Pass-and-play',
         PlayMode.trio => 'Three-way turns',
         PlayMode.quad => 'Four on one phone',
