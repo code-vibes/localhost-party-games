@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../networking/local_host.dart';
 import 'game_registry.dart';
+import 'play_mode.dart';
 
 class AppState extends ChangeNotifier {
   AppState() {
@@ -9,9 +10,19 @@ class AppState extends ChangeNotifier {
     localHost.statusStream.listen((_) => notifyListeners());
   }
 
+  PlayMode playMode = PlayMode.duo;
   int playerCount = 2;
   final scores = <int>[0, 0, 0, 0];
   final localHost = LocalHostController();
+
+  void setPlayMode(PlayMode mode) {
+    playMode = mode;
+    playerCount = mode.playerCount;
+    for (var i = 0; i < 4; i++) {
+      scores[i] = 0;
+    }
+    notifyListeners();
+  }
 
   void setPlayerCount(int count) {
     playerCount = count.clamp(1, 4);
@@ -19,6 +30,11 @@ class AppState extends ChangeNotifier {
       scores[i] = 0;
     }
     notifyListeners();
+  }
+
+  int teamScore(int teamIndex) {
+    if (!playMode.isTeam) return 0;
+    return teamIndex == 0 ? scores[0] + scores[1] : scores[2] + scores[3];
   }
 
   void awardWin(int playerIndex) {

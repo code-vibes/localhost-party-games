@@ -1,14 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../core/game_registry.dart';
+import '../core/app_state.dart';
+import '../core/play_mode.dart';
 import '../theme.dart';
 import 'game_grid_page.dart';
 import 'join_page.dart';
 import 'lobby_page.dart';
-import 'player_count_page.dart';
+import 'party_hub_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
+
+  static const _modes = [
+    (PlayMode.solo, Color(0xFFE85D4A), '1'),
+    (PlayMode.duo, Color(0xFF4BA3F5), '2'),
+    (PlayMode.trio, Color(0xFF5BCB73), '3'),
+    (PlayMode.quad, Color(0xFFF5B731), '4'),
+    (PlayMode.team2v2, Color(0xFF9B6BF2), '2v2'),
+    (PlayMode.party, Color(0xFFEE6FA0), '★'),
+  ];
+
+  void _openMode(BuildContext context, PlayMode mode) {
+    context.read<AppState>().setPlayMode(mode);
+    if (mode.isParty) {
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const PartyHubPage()));
+    } else {
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const GameGridPage()));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,94 +36,92 @@ class HomePage extends StatelessWidget {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFFDBECFF), PartyTheme.background, Color(0xFFF5EDFA)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            colors: [Color(0xFFFFF6EE), PartyTheme.background, Color(0xFFE9E5FF)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
         ),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Column(
-              children: [
-                const Spacer(flex: 2),
-                Text('LOCAL HOST',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          letterSpacing: 4,
-                          fontWeight: FontWeight.w800,
-                          color: PartyTheme.mutedInk,
-                        )),
-                const SizedBox(height: 8),
-                const Text('1234',
-                    style: TextStyle(
-                      fontSize: 72,
-                      fontWeight: FontWeight.w900,
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+            children: [
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(Icons.tune_rounded, color: PartyTheme.mutedInk),
+                  ),
+                  const Spacer(),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
                       color: PartyTheme.ink,
-                      height: 1,
-                    )),
-                const Text('PARTY GAMES',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w800,
-                      color: PartyTheme.ink,
-                    )),
-                const SizedBox(height: 10),
-                const Text(
-                  'Same-phone chaos or hotspot multiplayer.',
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Text('LAN PARTY', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 11)),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              ShaderMask(
+                shaderCallback: (rect) => const LinearGradient(
+                  colors: [Color(0xFFE85D4A), Color(0xFF4BA3F5), Color(0xFF5BCB73), Color(0xFFF5B731)],
+                ).createShader(rect),
+                child: const Text(
+                  'LOCAL HOST',
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: PartyTheme.mutedInk, fontWeight: FontWeight.w500),
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 3),
                 ),
-                const SizedBox(height: 32),
-                _PrimaryButton(
-                  label: 'PLAY ON THIS DEVICE',
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const PlayerCountPage()),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                _SecondaryButton(
-                  label: 'HOST LOCAL SESSION',
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const LobbyPage()),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                _SecondaryButton(
-                  label: 'JOIN VIA QR / LAN',
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const JoinPage()),
-                  ),
-                ),
-                const Spacer(),
+              ),
+              const Text(
+                'PARTY PAD',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 38, fontWeight: FontWeight.w900, color: PartyTheme.ink, height: 1.05),
+              ),
+              const SizedBox(height: 6),
+              const Text(
+                'Your couch. Your hotspot. Our playful spins on classic quick games.',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: PartyTheme.mutedInk, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 22),
+              for (var row = 0; row < 3; row++) ...[
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    for (var i = 0; i < GameRegistry.all.length; i++)
-                      Transform.rotate(
-                        angle: i.isEven ? -0.1 : 0.1,
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          margin: const EdgeInsets.symmetric(horizontal: 4),
-                          decoration: BoxDecoration(
-                            color: GameRegistry.all[i].bannerColor,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.white, width: 3),
-                          ),
-                        ),
-                      ),
+                    for (var col = 0; col < 2; col++) ...[
+                      Expanded(child: _ModeCard(
+                        accent: _modes[row * 2 + col].$2,
+                        badge: _modes[row * 2 + col].$3,
+                        mode: _modes[row * 2 + col].$1,
+                        onTap: () => _openMode(context, _modes[row * 2 + col].$1),
+                      )),
+                      if (col == 0) const SizedBox(width: 12),
+                    ],
                   ],
-                ),
-                const SizedBox(height: 24),
-                TextButton(
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const GameGridPage()),
-                  ),
-                  child: const Text('Skip to 2P grid'),
                 ),
                 const SizedBox(height: 12),
               ],
-            ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: _LanChip(
+                      icon: Icons.wifi_tethering,
+                      label: 'Host session',
+                      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const LobbyPage())),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _LanChip(
+                      icon: Icons.qr_code_scanner,
+                      label: 'Join LAN',
+                      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const JoinPage())),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
@@ -111,48 +129,91 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class _PrimaryButton extends StatelessWidget {
-  const _PrimaryButton({required this.label, required this.onTap});
-  final String label;
+class _ModeCard extends StatelessWidget {
+  const _ModeCard({
+    required this.accent,
+    required this.badge,
+    required this.mode,
+    required this.onTap,
+  });
+
+  final Color accent;
+  final String badge;
+  final PlayMode mode;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: FilledButton(
-        style: FilledButton.styleFrom(
-          backgroundColor: PartyTheme.ink,
-          padding: const EdgeInsets.symmetric(vertical: 18),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+    final isParty = mode.isParty;
+    return Material(
+      color: Colors.white.withOpacity(0.92),
+      borderRadius: BorderRadius.circular(22),
+      elevation: 0,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(22),
+        onTap: onTap,
+        child: Ink(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(color: Colors.white, width: 3),
+            boxShadow: [BoxShadow(color: accent.withOpacity(0.18), blurRadius: 14, offset: const Offset(0, 5))],
+          ),
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(14, 18, 14, 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      badge,
+                      style: TextStyle(fontSize: 34, fontWeight: FontWeight.w900, color: accent, height: 1),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(mode.label, style: const TextStyle(fontWeight: FontWeight.w900, color: PartyTheme.ink, fontSize: 13)),
+                    const SizedBox(height: 4),
+                    Text(mode.subtitle, style: const TextStyle(fontSize: 11, color: PartyTheme.mutedInk, fontWeight: FontWeight.w600)),
+                  ],
+                ),
+              ),
+              if (isParty)
+                Positioned(
+                  right: -4,
+                  top: 8,
+                  child: Transform.rotate(
+                    angle: 0.35,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      color: const Color(0xFFFFB347),
+                      child: const Text('MIX', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 10)),
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
-        onPressed: onTap,
-        child: Text(label, style: const TextStyle(fontWeight: FontWeight.w800)),
       ),
     );
   }
 }
 
-class _SecondaryButton extends StatelessWidget {
-  const _SecondaryButton({required this.label, required this.onTap});
+class _LanChip extends StatelessWidget {
+  const _LanChip({required this.icon, required this.label, required this.onTap});
+  final IconData icon;
   final String label;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: OutlinedButton(
-        style: OutlinedButton.styleFrom(
-          backgroundColor: Colors.white,
-          foregroundColor: PartyTheme.ink,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          side: const BorderSide(color: Colors.white, width: 3),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-        ),
-        onPressed: onTap,
-        child: Text(label, style: const TextStyle(fontWeight: FontWeight.w800)),
+    return OutlinedButton.icon(
+      style: OutlinedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
+      onPressed: onTap,
+      icon: Icon(icon, size: 20),
+      label: Text(label, style: const TextStyle(fontWeight: FontWeight.w800)),
     );
   }
 }

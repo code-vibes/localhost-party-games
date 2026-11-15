@@ -17,6 +17,16 @@ Colorful 2×3 tile menu, six 2-player-style minigames, pass-and-play, and **same
 | 🧠 | Brainrot Stack |
 | 🏹 | Archery |
 
+
+
+## Play in your browser
+
+After merge, open the hosted Flutter web build (GitHub Pages):
+
+**https://code-vibes.github.io/localhost-party-games/**
+
+Static files live in [`hosted/`](hosted/) (run `tool/sync_hosted_demo.sh` after `flutter build web`).
+
 ## Quick start
 
 ```bash

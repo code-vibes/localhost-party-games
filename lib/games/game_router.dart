@@ -2,12 +2,27 @@ import 'package:flutter/material.dart';
 
 import '../core/game_registry.dart';
 import '../theme.dart';
-import 'archery.dart';
 import 'animal_stack.dart';
+import 'archery.dart';
+import 'ball_physics.dart';
 import 'basketball.dart';
 import 'brainrot_stack.dart';
+import 'broken_tiles.dart';
 import 'cup_pong.dart';
+import 'darts_game.dart';
+import 'farkle.dart';
+import 'gravity_run.dart';
+import 'guess_animal.dart';
+import 'guess_person.dart';
+import 'ludo_race.dart';
+import 'nuts_bolts.dart';
+import 'sea_battle.dart';
+import 'snakes.dart';
+import 'solitaire_lite.dart';
+import 'triple_match.dart';
 import 'wheelie.dart';
+import 'wrestle.dart';
+import 'yazy.dart';
 
 class GameRouter extends StatelessWidget {
   const GameRouter({super.key, required this.gameId});
@@ -15,20 +30,29 @@ class GameRouter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    switch (gameId) {
-      case GameId.cupPong:
-        return const CupPongGame();
-      case GameId.wheelie:
-        return const WheelieGame();
-      case GameId.animalStack:
-        return const AnimalStackGame();
-      case GameId.basketballHoops:
-        return const BasketballGame();
-      case GameId.brainrotStack:
-        return const BrainrotStackGame();
-      case GameId.archery:
-        return const ArcheryGame();
-    }
+    return switch (gameId) {
+      GameId.cupPong => const CupPongGame(),
+      GameId.wheelie => const WheelieGame(),
+      GameId.animalStack => const AnimalStackGame(),
+      GameId.basketballHoops => const BasketballGame(),
+      GameId.brainrotStack => const BrainrotStackGame(),
+      GameId.archery => const ArcheryGame(),
+      GameId.farkle => const FarkleGame(),
+      GameId.triple => const TripleMatchGame(),
+      GameId.guessPerson => const GuessPersonGame(),
+      GameId.guessAnimal => const GuessAnimalGame(),
+      GameId.snakes => const SnakesGame(),
+      GameId.nutsBolts => const NutsBoltsGame(),
+      GameId.gravityRun => const GravityRunGame(),
+      GameId.seaBattle => const SeaBattleGame(),
+      GameId.darts => const DartsGame(),
+      GameId.wrestle => const WrestleGame(),
+      GameId.ballPhysics => const BallPhysicsGame(),
+      GameId.brokenTiles => const BrokenTilesGame(),
+      GameId.ludo => const LudoRaceGame(),
+      GameId.yazy => const YazyGame(),
+      GameId.solitaire => const SolitaireLiteGame(),
+    };
   }
 }
 
