@@ -78,7 +78,7 @@ class TurnBanner extends StatelessWidget {
   }
 }
 
-class ResultOverlay extends StatelessWidget {
+class ResultOverlay extends StatefulWidget {
   const ResultOverlay({
     super.key,
     required this.title,
@@ -93,30 +93,59 @@ class ResultOverlay extends StatelessWidget {
   final VoidCallback onDone;
 
   @override
+  State<ResultOverlay> createState() => _ResultOverlayState();
+}
+
+class _ResultOverlayState extends State<ResultOverlay> with SingleTickerProviderStateMixin {
+  late AnimationController _c;
+  late Animation<double> _scale;
+
+  @override
+  void initState() {
+    super.initState();
+    _c = AnimationController(vsync: this, duration: const Duration(milliseconds: 420));
+    _scale = CurvedAnimation(parent: _c, curve: Curves.elasticOut);
+    _c.forward();
+  }
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ColoredBox(
       color: Colors.black54,
       child: Center(
-        child: Container(
-          margin: const EdgeInsets.all(24),
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24)),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(title, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w900)),
-              const SizedBox(height: 8),
-              Text(detail, textAlign: TextAlign.center),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  FilledButton(onPressed: onAgain, child: const Text('Again')),
-                  const SizedBox(width: 12),
-                  OutlinedButton(onPressed: onDone, child: const Text('Done')),
-                ],
-              ),
-            ],
+        child: ScaleTransition(
+          scale: _scale,
+          child: Container(
+            margin: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 16, offset: const Offset(0, 6))],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(widget.title, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w900)),
+                const SizedBox(height: 8),
+                Text(widget.detail, textAlign: TextAlign.center),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    FilledButton(onPressed: widget.onAgain, child: const Text('Again')),
+                    const SizedBox(width: 12),
+                    OutlinedButton(onPressed: widget.onDone, child: const Text('Done')),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

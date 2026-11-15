@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/app_state.dart';
+import '../theme.dart';
+import 'engine/juice.dart';
 import 'game_router.dart';
 import 'turn_loop.dart';
 
@@ -16,7 +18,7 @@ class _WrestleGameState extends State<WrestleGame> with PassAndPlayMixin {
 
   void _mash() {
     while (power.length <= currentPlayer) power.add(0);
-    power[currentPlayer]++;
+    power[currentPlayer] += 1.2;
     if (power[currentPlayer] >= 25) finishMatch(currentPlayer, detail: 'Pinned!');
     setState(() {});
   }
@@ -32,9 +34,10 @@ class _WrestleGameState extends State<WrestleGame> with PassAndPlayMixin {
           turnBanner('Mash PIN before the rival does'),
           Expanded(
             child: Center(
-              child: FilledButton(
+              child: JuiceButton(
+                label: 'PIN!',
+                color: PartyTheme.playerColor(currentPlayer),
                 onPressed: _mash,
-                child: const Text('PIN!', style: TextStyle(fontSize: 28)),
               ),
             ),
           ),

@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -6,6 +5,8 @@ import 'package:provider/provider.dart';
 
 import '../core/app_state.dart';
 import '../theme.dart';
+import 'engine/game_tick.dart';
+import 'engine/juice.dart';
 import 'game_router.dart';
 
 class WheelieGame extends StatefulWidget {
@@ -14,7 +15,7 @@ class WheelieGame extends StatefulWidget {
   State<WheelieGame> createState() => _WheelieGameState();
 }
 
-class _WheelieGameState extends State<WheelieGame> {
+class _WheelieGameState extends State<WheelieGame> with TickerProviderStateMixin, GameTickMixin {
   double balance = 0.45;
   double velocity = 0;
   bool holding = false;
@@ -22,13 +23,14 @@ class _WheelieGameState extends State<WheelieGame> {
   double elapsed = 0;
   int current = 0;
   final scores = <double>[];
-  Timer? timer;
   bool showResult = false;
+  int crashFlash = 0;
   final rng = Random();
 
   @override
   void initState() {
     super.initState();
+    startTick();
     _start();
   }
 
@@ -38,48 +40,41 @@ class _WheelieGameState extends State<WheelieGame> {
     elapsed = 0;
     alive = true;
     holding = false;
-    timer?.cancel();
-    timer = Timer.periodic(const Duration(milliseconds: 33), (_) {
-      if (!alive || !mounted) return;
-      setState(() {
-        final force = holding ? -0.012 : 0.010;
-        velocity += force + (rng.nextDouble() - 0.5) * 0.008;
-        balance = (balance + velocity).clamp(0.0, 1.0);
-        elapsed += 0.033;
-        if (balance <= 0.02 || balance >= 0.98) {
-          alive = false;
-          holding = false;
-          timer?.cancel();
-        }
-      });
-    });
+    tickPaused = false;
+  }
+
+  @override
+  void onGameTick(double dt) {
+    if (!alive) return;
+    final force = holding ? -22 : 18;
+    velocity += (force + (rng.nextDouble() - 0.5) * 10) * dt;
+    velocity *= 0.985;
+    balance = (balance + velocity * dt).clamp(0.0, 1.0);
+    elapsed += dt;
+    if (balance <= 0.03 || balance >= 0.97) {
+      alive = false;
+      crashFlash++;
+      tickPaused = true;
+    }
+    setState(() {});
   }
 
   void _advance() {
-    while (scores.length <= current) {
-      scores.add(0);
-    }
+    while (scores.length <= current) scores.add(0);
     scores[current] = elapsed;
     if (current + 1 >= context.read<AppState>().playerCount) {
       setState(() => showResult = true);
     } else {
-      setState(() {
-        current += 1;
-      });
+      setState(() => current += 1);
       _start();
     }
-  }
-
-  @override
-  void dispose() {
-    timer?.cancel();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final app = context.watch<AppState>();
     final winner = scores.isEmpty ? 0 : scores.indexOf(scores.reduce(max));
+    final tilt = (balance * 50 - 22) * pi / 180;
     return Scaffold(
       appBar: AppBar(title: const Text('WHEELIE')),
       body: Stack(
@@ -88,68 +83,61 @@ class _WheelieGameState extends State<WheelieGame> {
             children: [
               TurnBanner(
                 playerIndex: current,
-                message: alive
-                    ? '${PartyTheme.playerName(current)} · hold in the green zone'
-                    : 'Crashed!',
+                message: alive ? '${PartyTheme.playerName(current)} · float in the green lane' : 'Spill! Tap NEXT',
               ),
               Expanded(
                 child: Container(
                   decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Color(0xFFB3E0FF), Color(0xFF9A9A9A)],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                    ),
+                    gradient: LinearGradient(colors: [Color(0xFFB3E0FF), Color(0xFF7A7A7A)], begin: Alignment.topCenter, end: Alignment.bottomCenter),
                   ),
                   child: Column(
                     children: [
                       const SizedBox(height: 24),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 40),
+                        padding: const EdgeInsets.symmetric(horizontal: 36),
                         child: Stack(
                           alignment: Alignment.centerLeft,
                           children: [
-                            Container(height: 14, decoration: BoxDecoration(color: Colors.white70, borderRadius: BorderRadius.circular(20))),
-                            Positioned(left: 90, child: Container(width: 70, height: 14, color: Colors.green.withOpacity(0.7))),
-                            Positioned(
-                              left: balance * 220,
-                              child: const CircleAvatar(radius: 9, backgroundColor: PartyTheme.redPlayer),
+                            Container(height: 16, decoration: BoxDecoration(color: Colors.white70, borderRadius: BorderRadius.circular(20))),
+                            Positioned(left: 82, child: Container(width: 76, height: 16, decoration: BoxDecoration(color: Colors.green.withOpacity(0.75), borderRadius: BorderRadius.circular(8)))),
+                            AnimatedPositioned(
+                              duration: const Duration(milliseconds: 16),
+                              curve: Curves.linear,
+                              left: balance * 250,
+                              child: Container(width: 18, height: 18, decoration: const BoxDecoration(color: PartyTheme.redPlayer, shape: BoxShape.circle, boxShadow: [BoxShadow(blurRadius: 4)])),
                             ),
                           ],
                         ),
                       ),
                       const Spacer(),
-                      Transform.rotate(
-                        angle: (balance * 55 - 20) * pi / 180,
-                        child: const Icon(Icons.two_wheeler, size: 80, color: PartyTheme.redPlayer),
+                      HitFlash(
+                        trigger: crashFlash,
+                        child: Transform.rotate(
+                          angle: tilt,
+                          child: const Icon(Icons.two_wheeler, size: 88, color: PartyTheme.redPlayer),
+                        ),
                       ),
-                      const SizedBox(height: 40),
+                      if (!alive) const Padding(padding: EdgeInsets.only(top: 8), child: FloatingCallout(text: 'WIPEOUT!', color: Colors.orange)),
+                      const SizedBox(height: 36),
                     ],
                   ),
                 ),
               ),
-              Text(elapsed.toStringAsFixed(1) + 's',
-                  style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w900)),
+              Text('${elapsed.toStringAsFixed(1)}s', style: const TextStyle(fontSize: 30, fontWeight: FontWeight.w900)),
               Padding(
                 padding: const EdgeInsets.all(16),
-                child: GestureDetector(
-                  onTapDown: (_) {
+                child: Listener(
+                  onPointerDown: (_) {
                     if (alive) setState(() => holding = true);
                   },
-                  onTapUp: (_) {
+                  onPointerUp: (_) {
                     setState(() => holding = false);
                     if (!alive) _advance();
                   },
-                  onTapCancel: () => setState(() => holding = false),
-                  child: Container(
-                    height: 64,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: holding ? PartyTheme.redPlayer : PartyTheme.ink,
-                      borderRadius: BorderRadius.circular(22),
-                    ),
-                    child: Text(alive ? 'HOLD' : 'NEXT',
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 20)),
+                  child: JuiceButton(
+                    label: alive ? 'HOLD TO LEAN' : 'NEXT RIDER',
+                    color: holding ? PartyTheme.redPlayer : PartyTheme.ink,
+                    onPressed: () {},
                   ),
                 ),
               ),
