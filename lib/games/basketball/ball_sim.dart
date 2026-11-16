@@ -46,10 +46,10 @@ class BallSim {
     Offset pull,
     Offset flickPxPerSec,
   ) {
-    if (pull.distance < 10 && flickPxPerSec.distance < 90) {
+    if (pull.distance < 6 && flickPxPerSec.distance < 55) {
       return (vx: 0, vy: 0, vz: 0, power: 0);
     }
-    final power = ((pull.distance / 88) + (flickPxPerSec.distance / 1300)).clamp(0.35, 1.45);
+    final power = ((pull.distance / 75) + (flickPxPerSec.distance / 1100)).clamp(0.32, 1.5);
 
     var dir = Offset.zero;
     if (pull.distance > 8) dir += Offset(-pull.dx, -pull.dy);
@@ -118,7 +118,7 @@ class BallSim {
       final dy = y - rimY;
       final dist = sqrt(dx * dx + dy * dy);
       if (dist < rimR + 0.12) {
-        if (dist < rimR * 0.58 && rimHits < 2 && vy <= 0.5) {
+        if (dist < rimR * 0.58 && rimHits < 2 && vy < 0.8) {
           live = false;
           return ShotEvent.scored(bank: rimHits > 0 || dist > rimR * 0.35);
         }

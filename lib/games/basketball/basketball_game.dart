@@ -202,11 +202,15 @@ class _BasketballGameState extends State<BasketballGame> with TickerProviderStat
                     : '${PartyTheme.playerName(current)} · pull back & flick',
               ),
               Expanded(
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onPanStart: _onPanStart,
-                  onPanUpdate: _onPanUpdate,
-                  onPanEnd: _onPanEnd,
+                child: Listener(
+                  behavior: HitTestBehavior.translucent,
+                  onPointerDown: (e) => _onPanStart(DragStartDetails(globalPosition: e.position, localPosition: e.localPosition)),
+                  onPointerMove: (e) {
+                    if (dragging) {
+                      _onPanUpdate(DragUpdateDetails(globalPosition: e.position, localPosition: e.localPosition, delta: e.delta));
+                    }
+                  },
+                  onPointerUp: (e) => _onPanEnd(DragEndDetails(velocity: Velocity.zero, primaryVelocity: 0)),
                   child: RepaintBoundary(
                     child: Transform.scale(
                       scale: cameraZoom,
