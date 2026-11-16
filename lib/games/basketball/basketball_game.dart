@@ -43,6 +43,9 @@ class _BasketballGameState extends State<BasketballGame> with TickerProviderStat
   Offset dragPull = Offset.zero;
   bool dragging = false;
   List<Vec3> previewArc = const [];
+  Offset _lastPointer = Offset.zero;
+  DateTime? _lastPointerAt;
+  Offset _pointerVel = Offset.zero;
 
   bool get vsCpu {
     final app = context.read<AppState>();
@@ -204,13 +207,28 @@ class _BasketballGameState extends State<BasketballGame> with TickerProviderStat
               Expanded(
                 child: Listener(
                   behavior: HitTestBehavior.translucent,
-                  onPointerDown: (e) => _onPanStart(DragStartDetails(globalPosition: e.position, localPosition: e.localPosition)),
-                  onPointerMove: (e) {
-                    if (dragging) {
-                      _onPanUpdate(DragUpdateDetails(globalPosition: e.position, localPosition: e.localPosition, delta: e.delta));
-                    }
+                  onPointerDown: (e) {
+                    _lastPointer = e.localPosition;
+                    _lastPointerAt = DateTime.now();
+                    _pointerVel = Offset.zero;
+                    _onPanStart(DragStartDetails(globalPosition: e.position, localPosition: e.localPosition));
                   },
-                  onPointerUp: (e) => _onPanEnd(DragEndDetails(velocity: Velocity.zero, primaryVelocity: 0)),
+                  onPointerMove: (e) {
+                    if (!dragging) return;
+                    final now = DateTime.now();
+                    if (_lastPointerAt != null) {
+                      final dt = now.difference(_lastPointerAt!).inMicroseconds / 1e6;
+                      if (dt > 0.001) {
+                        _pointerVel = (e.localPosition - _lastPointer) / dt;
+                      }
+                    }
+                    _lastPointer = e.localPosition;
+                    _lastPointerAt = now;
+                    _onPanUpdate(DragUpdateDetails(globalPosition: e.position, localPosition: e.localPosition, delta: e.delta));
+                  },
+                  onPointerUp: (_) {
+                    _onPanEnd(DragEndDetails(velocity: Velocity(pixelsPerSecond: _pointerVel)));
+                  },
                   child: RepaintBoundary(
                     child: Transform.scale(
                       scale: cameraZoom,
