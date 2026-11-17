@@ -1,7 +1,7 @@
 name: localhost_party_games
 description: Cross-platform party games with same-phone play and Local Host (LAN/hotspot) multiplayer.
 publish_to: 'none'
-version: 0.2.0+1
+version: 0.2.1+2
 
 environment:
   sdk: ^3.5.0

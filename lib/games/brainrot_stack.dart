@@ -1,10 +1,10 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../core/app_state.dart';
 import '../theme.dart';
+import 'engine/game_tick.dart';
+import 'engine/juice.dart';
 import 'game_router.dart';
 
 class BrainrotStackGame extends StatefulWidget {
@@ -13,19 +13,22 @@ class BrainrotStackGame extends StatefulWidget {
   State<BrainrotStackGame> createState() => _BrainrotStackGameState();
 }
 
-class _BrainrotStackGameState extends State<BrainrotStackGame> {
+class _BrainrotStackGameState extends State<BrainrotStackGame> with TickerProviderStateMixin, GameTickMixin {
   final bits = ['☕', '🛞', '🪿', '🐸', '📦', '🧢', '🍌', '🗿'];
   final layers = <_Layer>[];
   double slider = 0;
   double direction = 1;
+  double dropY = -80;
+  bool dropping = false;
   int current = 0;
   final scores = <int>[];
   bool showResult = false;
-  Timer? timer;
+  int flash = 0;
 
   @override
   void initState() {
     super.initState();
+    startTick();
     _start();
   }
 
@@ -33,31 +36,48 @@ class _BrainrotStackGameState extends State<BrainrotStackGame> {
     layers.clear();
     slider = 0;
     direction = 1;
-    timer?.cancel();
-    timer = Timer.periodic(const Duration(milliseconds: 22), (_) {
-      if (!mounted) return;
-      setState(() {
-        slider += direction * 3.8;
-        if (slider.abs() > 120) direction *= -1;
-      });
-    });
+    dropY = -80;
+    dropping = false;
+  }
+
+  @override
+  void onGameTick(double dt) {
+    if (!dropping) {
+      slider += direction * 155 * dt;
+      if (slider.abs() > 120) direction *= -1;
+    } else {
+      dropY += 480 * dt;
+      if (dropY >= 0) {
+        dropping = false;
+        _commitDrop();
+      }
+    }
+    setState(() {});
   }
 
   void _drop() {
+    if (dropping) return;
+    setState(() {
+      dropping = true;
+      dropY = -30;
+    });
+  }
+
+  void _commitDrop() {
     final width = (140 - layers.length * 8).clamp(48, 140).toDouble();
     final baseX = layers.isEmpty ? 0.0 : layers.last.x;
     if (layers.isNotEmpty && (slider - baseX).abs() > width * 0.55) {
       _finish();
       return;
     }
-    setState(() {
-      layers.add(_Layer(bits[layers.length % bits.length], width, slider, Colors.primaries[layers.length % Colors.primaries.length]));
-    });
+    flash++;
+    layers.add(_Layer(bits[layers.length % bits.length], width, slider, Colors.primaries[layers.length % Colors.primaries.length]));
+    dropY = -80;
     if (layers.length >= 10) _finish();
+    setState(() {});
   }
 
   void _finish() {
-    timer?.cancel();
     while (scores.length <= current) {
       scores.add(0);
     }
@@ -68,12 +88,6 @@ class _BrainrotStackGameState extends State<BrainrotStackGame> {
       setState(() => current += 1);
       _start();
     }
-  }
-
-  @override
-  void dispose() {
-    timer?.cancel();
-    super.dispose();
   }
 
   @override
@@ -90,7 +104,8 @@ class _BrainrotStackGameState extends State<BrainrotStackGame> {
               Expanded(
                 child: GestureDetector(
                   onTap: _drop,
-                  child: Container(
+                  child: RepaintBoundary(
+                    child: Container(
                     color: const Color(0xFFE6E9FF),
                     child: Stack(
                       alignment: Alignment.bottomCenter,
@@ -122,26 +137,31 @@ class _BrainrotStackGameState extends State<BrainrotStackGame> {
                           );
                         }),
                         Positioned(
-                          top: 50,
+                          top: 50 + dropY,
                           left: 0,
                           right: 0,
                           child: Transform.translate(
                             offset: Offset(slider, 0),
                             child: Center(
-                              child: Container(
+                              child: HitFlash(
+                                trigger: flash,
+                                child: Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(10),
                                   border: Border.all(width: 2),
+                                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 6)],
                                 ),
                                 child: Text(bits[layers.length % bits.length], style: const TextStyle(fontSize: 32)),
+                              ),
                               ),
                             ),
                           ),
                         ),
                       ],
                     ),
+                  ),
                   ),
                 ),
               ),

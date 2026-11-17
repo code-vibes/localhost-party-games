@@ -3,8 +3,10 @@ import 'package:provider/provider.dart';
 
 import '../core/app_state.dart';
 import '../core/game_registry.dart';
+import '../core/play_mode.dart';
 import '../games/game_router.dart';
 import '../theme.dart';
+import 'tile_art.dart';
 
 class GameGridPage extends StatelessWidget {
   const GameGridPage({super.key});
@@ -12,12 +14,39 @@ class GameGridPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final app = context.watch<AppState>();
-    final title = '${app.playerCount} PLAYER GAMES';
+    final games = GameRegistry.forMode(app.playMode);
+    final title = switch (app.playMode) {
+      PlayMode.solo => 'SOLO ARCADE',
+      PlayMode.duo => 'DUO GAMES',
+      PlayMode.trio => 'TRIO GAMES',
+      PlayMode.quad => 'SQUAD GAMES',
+      PlayMode.team2v2 => 'TEAM SHOWDOWN',
+      PlayMode.party => 'PARTY GRID',
+    };
 
     return Scaffold(
       appBar: AppBar(title: Text(title)),
       body: Column(
         children: [
+          if (app.playMode.isTeam)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              child: Row(
+                children: [
+                  Expanded(child: _TeamPill(label: 'TEAM A', score: app.teamScore(0), colors: [PartyTheme.redPlayer, PartyTheme.orangePlayer])),
+                  const SizedBox(width: 10),
+                  Expanded(child: _TeamPill(label: 'TEAM B', score: app.teamScore(1), colors: [PartyTheme.bluePlayer, PartyTheme.greenPlayer])),
+                ],
+              ),
+            ),
+          if (app.playMode.isParty)
+            const Padding(
+              padding: EdgeInsets.fromLTRB(16, 10, 16, 0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text('Party picks first — then the full library.', style: TextStyle(color: PartyTheme.mutedInk, fontWeight: FontWeight.w600)),
+              ),
+            ),
           Expanded(
             child: GridView.builder(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
@@ -25,11 +54,11 @@ class GameGridPage extends StatelessWidget {
                 crossAxisCount: 2,
                 mainAxisSpacing: 14,
                 crossAxisSpacing: 14,
-                childAspectRatio: 0.92,
+                childAspectRatio: 0.88,
               ),
-              itemCount: GameRegistry.all.length,
+              itemCount: games.length,
               itemBuilder: (context, index) {
-                final game = GameRegistry.all[index];
+                final game = games[index];
                 return _GameTile(
                   game: game,
                   onTap: () => Navigator.of(context).push(
@@ -39,7 +68,40 @@ class GameGridPage extends StatelessWidget {
               },
             ),
           ),
-          _ScoreBar(playerCount: app.playerCount, scores: app.scores),
+          _ScoreBar(app: app),
+        ],
+      ),
+    );
+  }
+}
+
+class _TeamPill extends StatelessWidget {
+  const _TeamPill({required this.label, required this.score, required this.colors});
+  final String label;
+  final int score;
+  final List<Color> colors;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white, width: 3),
+      ),
+      child: Row(
+        children: [
+          for (final c in colors)
+            Container(
+              width: 14,
+              height: 14,
+              margin: const EdgeInsets.only(right: 4),
+              decoration: BoxDecoration(color: c, shape: BoxShape.circle),
+            ),
+          const SizedBox(width: 6),
+          Expanded(child: Text(label, style: const TextStyle(fontWeight: FontWeight.w900))),
+          Text('$score', style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
         ],
       ),
     );
@@ -62,35 +124,45 @@ class _GameTile extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
             border: Border.all(color: Colors.white, width: 5),
-            boxShadow: [
-              BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 6, offset: const Offset(0, 3)),
-            ],
+            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 6, offset: const Offset(0, 3))],
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(13),
-            child: Column(
+            child: Stack(
               children: [
-                Expanded(
-                  child: ColoredBox(
-                    color: game.artBackground,
-                    child: Center(child: _TileArt(gameId: game.id)),
-                  ),
+                Column(
+                  children: [
+                    Expanded(
+                      child: ColoredBox(
+                        color: game.artBackground,
+                        child: Center(child: GameTileArt(gameId: game.id)),
+                      ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      color: game.bannerColor,
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
+                      child: Text(
+                        game.title,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 11, letterSpacing: 0.3),
+                      ),
+                    ),
+                  ],
                 ),
-                Container(
-                  width: double.infinity,
-                  color: game.bannerColor,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: Text(
-                    game.title,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 12,
-                      letterSpacing: 0.4,
+                if (game.isNew)
+                  Positioned(
+                    right: -2,
+                    top: 6,
+                    child: Transform.rotate(
+                      angle: 0.4,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        color: const Color(0xFFFF9F43),
+                        child: const Text('NEW', style: TextStyle(fontSize: 9, fontWeight: FontWeight.w900)),
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
           ),
@@ -100,33 +172,9 @@ class _GameTile extends StatelessWidget {
   }
 }
 
-class _TileArt extends StatelessWidget {
-  const _TileArt({required this.gameId});
-  final GameId gameId;
-
-  @override
-  Widget build(BuildContext context) {
-    switch (gameId) {
-      case GameId.cupPong:
-        return const Icon(Icons.sports_bar, size: 56, color: Colors.red);
-      case GameId.wheelie:
-        return const Icon(Icons.two_wheeler, size: 56, color: PartyTheme.redPlayer);
-      case GameId.animalStack:
-        return const Icon(Icons.pets, size: 56, color: Colors.orange);
-      case GameId.basketballHoops:
-        return const Icon(Icons.sports_basketball, size: 56, color: Colors.deepOrange);
-      case GameId.brainrotStack:
-        return const Icon(Icons.auto_awesome, size: 56, color: Colors.purple);
-      case GameId.archery:
-        return const Icon(Icons.gps_fixed, size: 56, color: Colors.green);
-    }
-  }
-}
-
 class _ScoreBar extends StatelessWidget {
-  const _ScoreBar({required this.playerCount, required this.scores});
-  final int playerCount;
-  final List<int> scores;
+  const _ScoreBar({required this.app});
+  final AppState app;
 
   @override
   Widget build(BuildContext context) {
@@ -138,23 +186,20 @@ class _ScoreBar extends StatelessWidget {
       ),
       child: Row(
         children: [
-          for (var i = 0; i < playerCount; i++)
+          for (var i = 0; i < app.playerCount; i++)
             Expanded(
               child: Column(
                 children: [
                   CircleAvatar(
                     radius: 27,
                     backgroundColor: PartyTheme.playerColor(i),
-                    child: const Icon(Icons.person, color: Colors.white),
+                    child: Text('${i + 1}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900)),
                   ),
                   const SizedBox(height: 6),
                   CircleAvatar(
                     radius: 17,
                     backgroundColor: Colors.white,
-                    child: Text(
-                      '${scores[i]}',
-                      style: const TextStyle(fontWeight: FontWeight.w900, color: PartyTheme.ink),
-                    ),
+                    child: Text('${app.scores[i]}', style: const TextStyle(fontWeight: FontWeight.w900, color: PartyTheme.ink)),
                   ),
                 ],
               ),

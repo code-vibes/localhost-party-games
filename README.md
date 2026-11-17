@@ -17,6 +17,16 @@ Colorful 2×3 tile menu, six 2-player-style minigames, pass-and-play, and **same
 | 🧠 | Brainrot Stack |
 | 🏹 | Archery |
 
+
+
+## Play in your browser
+
+After merge, open the hosted Flutter web build (GitHub Pages):
+
+**https://code-vibes.github.io/localhost-party-games/**
+
+Static files live in [`docs/`](docs/) (run `tool/sync_hosted_demo.sh` after `flutter build web`).
+
 ## Quick start
 
 ```bash
@@ -59,7 +69,7 @@ You still need Apple Developer + a physical iPhone (or someone else's Mac) for a
 
 ## CI
 
-Workflow template: [`docs/github-actions-build.yml`](docs/github-actions-build.yml)  
+Workflow template: [`docs/ci/github-actions-build.yml`](docs/ci/github-actions-build.yml)  
 (copy to `.github/workflows/build.yml` once a token with the `workflow` scope can write Actions files). Builds:
 
 - `web-build` — static site
