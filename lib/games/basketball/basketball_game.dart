@@ -32,15 +32,12 @@ class _BasketballGameState extends State<BasketballGame> with TickerProviderStat
   final _flying = <FlyingBall>[];
   final _net = NetMesh();
 
-  Offset _dragStart = Offset.zero;
-  Offset _dragPull = Offset.zero;
-  bool _dragging = false;
-  List<Vec3> _preview = const [];
+  bool _holding = false;
+  Vec3 _ready = CourtWorld.spawn;
   Offset _lastPtr = Offset.zero;
   DateTime? _lastPtrAt;
   Offset _ptrVel = Offset.zero;
 
-  final _ready = Vec3(CourtWorld.spawn.x, CourtWorld.spawn.y, CourtWorld.spawn.z);
   Size _viewSize = const Size(400, 700);
 
   @override
@@ -59,6 +56,7 @@ class _BasketballGameState extends State<BasketballGame> with TickerProviderStat
       _flying.clear();
       _popup = null;
       _hoopPhase = 0;
+      _ready = CourtWorld.spawn;
     });
   }
 
@@ -93,7 +91,6 @@ class _BasketballGameState extends State<BasketballGame> with TickerProviderStat
         }
         if (r != null && !b.live) {
           _flying.remove(b);
-          if (r == false && _popup == null) _popup = null;
         }
         if (r != null) break;
       }
@@ -102,12 +99,6 @@ class _BasketballGameState extends State<BasketballGame> with TickerProviderStat
       }
     }
     _net.step(dt, contacts);
-
-    if (_dragging) {
-      final flick = _ptrVel;
-      final ghost = FlyingBall.spawnFlying(_dragPull, flick);
-      _preview = ghost.live ? ghost.predictArc(_dragPull, flick, _hoopX) : const [];
-    }
 
     if (mounted) setState(() {});
   }
@@ -120,15 +111,18 @@ class _BasketballGameState extends State<BasketballGame> with TickerProviderStat
   }
 
   void _shoot() {
-    if (!_playing || _ended) return;
-    final flick = _ptrVel;
-    final ball = FlyingBall.spawnFlying(_dragPull, flick);
+    if (!_playing || _ended || _difficulty == null) return;
+    final ball = FlyingBall.spawnFlying(
+      _ptrVel,
+      _ready.x,
+      hoopX: _hoopX,
+      aimAssist: _difficulty!.aimAssist,
+    );
     if (ball.live) {
       _flying.add(ball);
     }
-    _dragging = false;
-    _dragPull = Offset.zero;
-    _preview = const [];
+    _holding = false;
+    _ready = CourtWorld.spawn;
   }
 
   @override
@@ -140,7 +134,11 @@ class _BasketballGameState extends State<BasketballGame> with TickerProviderStat
       appBar: AppBar(
         title: const Text('BASKETBLAST · 60s'),
         actions: [
-          if (_best > 0) Padding(padding: const EdgeInsets.only(right: 12), child: Center(child: Text('BEST $_best', style: const TextStyle(fontWeight: FontWeight.w800)))),
+          if (_best > 0)
+            Padding(
+              padding: const EdgeInsets.only(right: 12),
+              child: Center(child: Text('BEST $_best', style: const TextStyle(fontWeight: FontWeight.w800))),
+            ),
         ],
       ),
       body: Stack(
@@ -152,22 +150,23 @@ class _BasketballGameState extends State<BasketballGame> with TickerProviderStat
               children: [
                 TurnBanner(
                   playerIndex: 0,
-                  message: '${_difficulty!.label} · ${_difficulty!.hint} · swipe up to shoot · queue enabled',
+                  message: '${_difficulty!.label} · drag ball sideways · flick up to shoot',
                 ),
                 Expanded(
                   child: Listener(
                     behavior: HitTestBehavior.translucent,
                     onPointerDown: (e) {
                       if (!_playing || _ended) return;
-                      _dragStart = e.localPosition;
+                      _holding = true;
                       _lastPtr = e.localPosition;
                       _lastPtrAt = DateTime.now();
                       _ptrVel = Offset.zero;
-                      _dragging = true;
-                      _dragPull = Offset.zero;
+                      _ready = _ready.copyWith(
+                        x: CourtWorld.worldXFromScreen(e.localPosition.dx, _viewSize),
+                      );
                     },
                     onPointerMove: (e) {
-                      if (!_dragging) return;
+                      if (!_holding) return;
                       final now = DateTime.now();
                       if (_lastPtrAt != null) {
                         final dt = now.difference(_lastPtrAt!).inMicroseconds / 1e6;
@@ -175,28 +174,27 @@ class _BasketballGameState extends State<BasketballGame> with TickerProviderStat
                       }
                       _lastPtr = e.localPosition;
                       _lastPtrAt = now;
-                      _dragPull = e.localPosition - _dragStart;
+                      _ready = _ready.copyWith(
+                        x: CourtWorld.worldXFromScreen(e.localPosition.dx, _viewSize),
+                      );
                     },
                     onPointerUp: (_) {
-                      if (_dragging) _shoot();
+                      if (_holding) _shoot();
                     },
                     child: RepaintBoundary(
                       child: LayoutBuilder(
                         builder: (context, c) {
                           _viewSize = Size(c.maxWidth, c.maxHeight);
                           return CustomPaint(
-                        painter: CourtScenePainter(
-                          hoopX: _hoopX,
-                          timeLeft: _timeLeft,
-                          baskets: _baskets,
-                          flying: _flying,
-                          readyPos: _ready,
-                          showReady: _playing && !_ended,
-                          previewArc: _preview,
-                          net: _net,
-                          aimPull: _dragging ? _dragPull : null,
-                          dragging: _dragging,
-                        ),
+                            painter: CourtScenePainter(
+                              hoopX: _hoopX,
+                              timeLeft: _timeLeft,
+                              baskets: _baskets,
+                              flying: _flying,
+                              readyPos: _ready,
+                              showReady: _playing && !_ended,
+                              net: _net,
+                            ),
                             child: const SizedBox.expand(),
                           );
                         },
@@ -204,18 +202,6 @@ class _BasketballGameState extends State<BasketballGame> with TickerProviderStat
                     ),
                   ),
                 ),
-                if (_dragging)
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 4, 20, 8),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: LinearProgressIndicator(
-                        value: (_dragPull.distance / 140).clamp(0, 1),
-                        minHeight: 10,
-                        color: const Color(0xFFE53935),
-                      ),
-                    ),
-                  ),
               ],
             ),
           if (_popup != null)
@@ -257,7 +243,7 @@ class _DifficultyPicker extends StatelessWidget {
           children: [
             const Text('60 SECOND SHOOTOUT', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900)),
             const SizedBox(height: 8),
-            const Text('Make as many baskets as you can. Balls queue instantly — keep flicking!'),
+            const Text('Drag the ball left or right, then flick up. Keep shooting — balls queue instantly.'),
             const SizedBox(height: 24),
             for (final d in HoopDifficulty.values) ...[
               SizedBox(

@@ -13,10 +13,7 @@ class CourtScenePainter extends CustomPainter {
     required this.flying,
     required this.readyPos,
     required this.showReady,
-    required this.previewArc,
     required this.net,
-    required this.aimPull,
-    required this.dragging,
   });
 
   final double hoopX;
@@ -25,10 +22,7 @@ class CourtScenePainter extends CustomPainter {
   final List<FlyingBall> flying;
   final Vec3 readyPos;
   final bool showReady;
-  final List<Vec3> previewArc;
   final NetMesh net;
-  final Offset? aimPull;
-  final bool dragging;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -42,21 +36,6 @@ class CourtScenePainter extends CustomPainter {
     _backboard(canvas, hoopScreen);
     _rim(canvas, hoopScreen);
 
-    if (previewArc.length > 1) {
-      final arcPaint = Paint()..color = Colors.amberAccent.withOpacity(0.4)..strokeWidth = 2;
-      final path = Path();
-      for (var i = 0; i < previewArc.length; i++) {
-        final p = CourtWorld.project(previewArc[i], size);
-        if (i == 0) {
-          path.moveTo(p.dx, p.dy);
-        } else {
-          path.lineTo(p.dx, p.dy);
-        }
-        canvas.drawCircle(p, 3 - i * 0.05, Paint()..color = Colors.amber.withOpacity(0.9 - i * 0.025));
-      }
-      canvas.drawPath(path, arcPaint);
-    }
-
     final sorted = [...flying]..sort((a, b) => a.z.compareTo(b.z));
     for (final b in sorted) {
       final center = CourtWorld.project(Vec3(b.x, b.y, b.z), size);
@@ -65,11 +44,6 @@ class CourtScenePainter extends CustomPainter {
     if (showReady) {
       final center = CourtWorld.project(readyPos, size);
       SpherePaint.draw(canvas, center, CourtWorld.ballRadius(readyPos), BallRotation());
-    }
-
-    if (dragging && aimPull != null) {
-      final start = CourtWorld.project(readyPos, size);
-      canvas.drawLine(start, start - aimPull! * 0.35, Paint()..color = Colors.orangeAccent..strokeWidth = 3.5);
     }
 
     _hud(canvas, size);

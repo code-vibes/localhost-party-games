@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 
 /// Shared court constants + perspective projection (pseudo-3D).
 class CourtWorld {
-  static const rimZ = 9.85;
-  static const rimY = 3.05;
-  static const rimR = 0.42;
-  static const gravity = 15.2;
+  static const rimZ = 9.6;
+  static const rimY = 3.0;
+  static const rimR = 0.48;
+  static const gravity = 13.5;
   static const floorY = 0.18;
   static const spawn = Vec3(0, 2.05, 0);
   static const fixedDt = 1 / 120;
@@ -26,16 +26,23 @@ class CourtWorld {
     return 20 * (0.5 + (1 - t) * 0.65);
   }
 
+  /// Map screen X (while ball on floor) to lateral court meters.
+  static double worldXFromScreen(double screenX, Size size) {
+    final depth = 1.0;
+    final cx = size.width / 2;
+    return ((screenX - cx) / (54 * depth)).clamp(-2.6, 2.6);
+  }
+
   static double hoopSway(double time, HoopDifficulty difficulty) {
     final amp = switch (difficulty) {
       HoopDifficulty.easy => 0.0,
-      HoopDifficulty.medium => 0.75,
-      HoopDifficulty.hard => 1.35,
+      HoopDifficulty.medium => 0.65,
+      HoopDifficulty.hard => 1.25,
     };
     final speed = switch (difficulty) {
       HoopDifficulty.easy => 0.0,
-      HoopDifficulty.medium => 0.75,
-      HoopDifficulty.hard => 1.45,
+      HoopDifficulty.medium => 0.7,
+      HoopDifficulty.hard => 1.35,
     };
     return sin(time * speed) * amp;
   }
@@ -46,7 +53,7 @@ class Vec3 {
   final double x;
   final double y;
   final double z;
-  Vec3 addVel(double vx, double vy, double vz) => Vec3(x + vx, y + vy, z + vz);
+  Vec3 copyWith({double? x, double? y, double? z}) => Vec3(x ?? this.x, y ?? this.y, z ?? this.z);
 }
 
 enum HoopDifficulty { easy, medium, hard }
@@ -62,4 +69,5 @@ extension HoopDifficultyLabel on HoopDifficulty {
         HoopDifficulty.medium => 'Slow sway',
         HoopDifficulty.hard => 'Fast sway',
       };
+  bool get aimAssist => this == HoopDifficulty.easy;
 }

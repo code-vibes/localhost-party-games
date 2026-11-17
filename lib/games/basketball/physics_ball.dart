@@ -18,29 +18,18 @@ class BallRotation {
 }
 
 class FlyingBall {
-  FlyingBall.spawn()
-      : x = CourtWorld.spawn.x,
-        y = CourtWorld.spawn.y,
-        z = CourtWorld.spawn.z,
-        live = false,
-        id = _nextId++;
-
-  FlyingBall._flying(this.id)
-      : x = CourtWorld.spawn.x,
-        y = CourtWorld.spawn.y,
-        z = CourtWorld.spawn.z,
-        live = true;
+  FlyingBall._flying(this.id) : live = true;
 
   static int _nextId = 0;
 
   final int id;
-  double x;
-  double y;
-  double z;
+  double x = CourtWorld.spawn.x;
+  double y = CourtWorld.spawn.y;
+  double z = CourtWorld.spawn.z;
   double vx = 0;
   double vy = 0;
   double vz = 0;
-  bool live;
+  bool live = false;
   int rimHits = 0;
   bool scored = false;
   bool counted = false;
@@ -49,29 +38,29 @@ class FlyingBall {
   double _wy = 0;
   double _wz = 0;
 
-  bool get onFloor => !live && y <= CourtWorld.floorY + 0.05;
-
-  void launch(Offset pull, Offset flick) {
-    final imp = ShotController.launchVelocity(pull, flick);
-    if (imp.vx == 0 && imp.vy == 0 && imp.vz == 0) return;
-    x = CourtWorld.spawn.x;
-    y = CourtWorld.spawn.y;
-    z = CourtWorld.spawn.z;
-    vx = imp.vx;
-    vy = imp.vy;
-    vz = imp.vz;
-    live = true;
-    rimHits = 0;
-    scored = false;
-    counted = false;
-    _wx = imp.vx * 2.2;
-    _wy = imp.spin;
-    _wz = imp.vz * 0.4;
-  }
-
-  static FlyingBall spawnFlying(Offset pull, Offset flick) {
+  static FlyingBall spawnFlying(
+    Offset flick,
+    double startX, {
+    double hoopX = 0,
+    bool aimAssist = false,
+  }) {
     final b = FlyingBall._flying(_nextId++);
-    b.launch(pull, flick);
+    final imp = ShotController.fromFlick(flick, startX, hoopX: hoopX, aimAssist: aimAssist);
+    if (imp.vz <= 0) return b..live = false;
+
+    b.x = startX;
+    b.y = CourtWorld.spawn.y;
+    b.z = CourtWorld.spawn.z;
+    b.vx = imp.vx;
+    b.vy = imp.vy;
+    b.vz = imp.vz;
+    b.live = true;
+    b.rimHits = 0;
+    b.scored = false;
+    b.counted = false;
+    b._wx = imp.vx * 1.8;
+    b._wy = imp.spin;
+    b._wz = imp.vz * 0.35;
     return b;
   }
 
@@ -79,10 +68,10 @@ class FlyingBall {
   bool? step(double hoopX, void Function(Vec3 pos, double radius) netHit) {
     if (!live) return scored ? true : false;
 
-    const substeps = 2;
+    const substeps = 3;
     for (var s = 0; s < substeps; s++) {
       vy -= CourtWorld.gravity * CourtWorld.fixedDt;
-      final drag = pow(0.9988, CourtWorld.fixedDt * 60);
+      final drag = pow(0.999, CourtWorld.fixedDt * 60);
       vx *= drag;
       vz *= drag;
       x += vx * CourtWorld.fixedDt;
@@ -94,11 +83,11 @@ class FlyingBall {
 
     if (y <= CourtWorld.floorY) {
       y = CourtWorld.floorY;
-      if (vy < -0.5) {
-        vy = -vy * 0.55;
-        vx *= 0.72;
-        vz *= 0.78;
-        _wy += 4;
+      if (vy < -0.35) {
+        vy = -vy * 0.52;
+        vx *= 0.74;
+        vz *= 0.8;
+        _wy += 3;
         netHit(Vec3(x, y, z), CourtWorld.rimR * 0.7);
       } else {
         live = false;
@@ -106,56 +95,46 @@ class FlyingBall {
       }
     }
 
-    final nearRim = z >= CourtWorld.rimZ - 0.4 && z <= CourtWorld.rimZ + 0.55;
-    if (nearRim && vy < 1.2) {
+    final atRimPlane = z >= CourtWorld.rimZ - 0.08 && z <= CourtWorld.rimZ + 0.5;
+    if (atRimPlane) {
       final dx = x - hoopX;
       final dy = y - CourtWorld.rimY;
       final dist = sqrt(dx * dx + dy * dy);
-      final ballR = CourtWorld.rimR * 0.55;
-      if (dist < CourtWorld.rimR + ballR * 0.5) {
-        if (dist < CourtWorld.rimR * 0.52 && vy < 0.5 && rimHits < 3) {
+      final outer = CourtWorld.rimR + 0.28;
+
+      if (dist < outer) {
+        final inCylinder = dist < CourtWorld.rimR * 0.78 && dy.abs() < 0.85;
+        final descending = vy < 2.5;
+        if (inCylinder && descending && rimHits < 4) {
           scored = true;
           live = false;
-          netHit(Vec3(x, CourtWorld.rimY, CourtWorld.rimZ), ballR);
+          netHit(Vec3(x, CourtWorld.rimY, CourtWorld.rimZ), CourtWorld.rimR * 0.5);
           return true;
         }
-        if (rimHits < 5) {
+        if (dist < outer && rimHits < 6) {
           rimHits++;
           final n = max(dist, 0.001);
           final nx = dx / n;
           final ny = dy / n;
-          const rest = 0.52;
+          const rest = 0.58;
           final vd = vx * nx + vy * ny;
           vx = (vx - 2 * vd * nx) * rest;
           vy = (vy - 2 * vd * ny) * rest;
-          vz *= 0.15;
-          z = CourtWorld.rimZ - 0.3;
-          _wy += 6;
-          netHit(Vec3(x, CourtWorld.rimY, CourtWorld.rimZ), ballR);
-        } else {
+          if (z > CourtWorld.rimZ) vz = -vz.abs() * 0.25;
+          z = min(z, CourtWorld.rimZ - 0.15);
+          _wy += 5;
+          netHit(Vec3(x, CourtWorld.rimY, CourtWorld.rimZ), CourtWorld.rimR * 0.5);
+        } else if (z > CourtWorld.rimZ + 0.3) {
           live = false;
           return false;
         }
       }
     }
 
-    if (z > 12 || x.abs() > 7 || y < -2) {
+    if (z > 11.5 || x.abs() > 7.5 || y < -2) {
       live = false;
       return scored ? true : false;
     }
     return null;
-  }
-
-  List<Vec3> predictArc(Offset pull, Offset flick, double hoopX, {int steps = 32}) {
-    final ghost = FlyingBall._flying(-1);
-    ghost.launch(pull, flick);
-    if (!ghost.live) return [];
-    final pts = <Vec3>[];
-    for (var i = 0; i < steps; i++) {
-      final r = ghost.step(hoopX, (_, __) {});
-      pts.add(Vec3(ghost.x, ghost.y, ghost.z));
-      if (r != null) break;
-    }
-    return pts;
   }
 }
