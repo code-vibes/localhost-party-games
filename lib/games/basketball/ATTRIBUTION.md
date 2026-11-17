@@ -1,7 +1,7 @@
-# Basketball — open-source inspiration (not copied assets/code)
+# Basketball — open-source physics inspiration (no asset/code clone)
 
-- [FaridSafi/react-native-basketball](https://github.com/FaridSafi/react-native-basketball) (MIT) — gravity integration, elastic rim/net collision ideas.
-- [lamesjim/Canvas-Basketball-Game](https://github.com/lamesjim/Canvas-Basketball-Game) (MIT) — trajectory + power shooting on canvas.
-- [benjaminmiles/react-three-basketball](https://github.com/benjaminmiles/react-three-basketball) (MIT) — 3D arc / contact reference.
+- [ikucukkaya/notch-games](https://github.com/ikucukkaya/notch-games) (LICENSE in repo) — `ShotController` slingshot mapping, `GameTuning` gravity feel, `NetClothSimulation` verlet net concepts.
+- [FaridSafi/react-native-basketball](https://github.com/FaridSafi/react-native-basketball) (MIT) — rim bounce decomposition.
+- [lamesjim/Canvas-Basketball-Game](https://github.com/lamesjim/Canvas-Basketball-Game) (MIT) — gravity arcs.
 
-Local Host implementation is original Dart (`ball_sim.dart`, `court_painter.dart`).
+Implementation is original Dart/Flutter (`physics_ball.dart`, `net_mesh.dart`, `sphere_paint.dart`).
