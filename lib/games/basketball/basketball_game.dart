@@ -34,6 +34,7 @@ class _BasketballGameState extends State<BasketballGame> with TickerProviderStat
 
   bool _holding = false;
   Vec3 _ready = CourtWorld.spawn;
+  Offset _downPtr = Offset.zero;
   Offset _lastPtr = Offset.zero;
   DateTime? _lastPtrAt;
   Offset _ptrVel = Offset.zero;
@@ -158,6 +159,7 @@ class _BasketballGameState extends State<BasketballGame> with TickerProviderStat
                     onPointerDown: (e) {
                       if (!_playing || _ended) return;
                       _holding = true;
+                      _downPtr = e.localPosition;
                       _lastPtr = e.localPosition;
                       _lastPtrAt = DateTime.now();
                       _ptrVel = Offset.zero;
@@ -179,7 +181,14 @@ class _BasketballGameState extends State<BasketballGame> with TickerProviderStat
                       );
                     },
                     onPointerUp: (_) {
-                      if (_holding) _shoot();
+                      if (!_holding) return;
+                      var flick = _ptrVel;
+                      final swipe = _lastPtr - _downPtr;
+                      if (flick.distance < 140 && swipe.dy < -24) {
+                        flick = Offset(swipe.dx * 5.5, swipe.dy * 5.5);
+                      }
+                      _ptrVel = flick;
+                      _shoot();
                     },
                     child: RepaintBoundary(
                       child: LayoutBuilder(

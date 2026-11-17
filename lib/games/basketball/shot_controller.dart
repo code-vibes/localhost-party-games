@@ -6,7 +6,7 @@ import 'world.dart';
 
 /// Launch inferred only from release flick (no pull-back aim).
 class ShotController {
-  static const minFlick = 90.0;
+  static const minFlick = 75.0;
 
   static ({double vx, double vy, double vz, double spin}) fromFlick(
     Offset flickPxPerSec,
@@ -15,7 +15,7 @@ class ShotController {
     bool aimAssist = false,
   }) {
     final speed = flickPxPerSec.distance;
-    if (speed < minFlick || flickPxPerSec.dy > -35) {
+    if (speed < minFlick || flickPxPerSec.dy > -28) {
       return (vx: 0, vy: 0, vz: 0, spin: 0);
     }
 
